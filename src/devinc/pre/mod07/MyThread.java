@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class MyThread implements Runnable {
 	static String open = "([<{";
 	static String close = ")]>}";
-	final String fileName = "src\\devinc\\pre\\mod07\\data\\text.txt";
+	final String fileName = "src\\devinc\\pre\\data\\text.txt";
 
 	private Thread t;
 

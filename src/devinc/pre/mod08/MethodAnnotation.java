@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.METHOD)
 @Retention(value = RetentionPolicy.RUNTIME) // аннотация будет записана в class-файл и доступна во время выполнения
 											// через reflection
-public @interface MyAnnotation {
-	String type() default "string";
+public @interface MethodAnnotation {
+//	String type() default "string";
 }

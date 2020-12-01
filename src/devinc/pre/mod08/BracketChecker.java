@@ -1,45 +1,45 @@
 package devinc.pre.mod08;
 
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class Starter {
+public class BracketChecker {
 	static String open = "([<{";
 	static String close = ")]>}";
+	private String st; // вот что мы будем проверять
 
-	public static void main(String[] args) {
-		// консольное приложение, в которое вводиться с консоли строка и проверяется
-		// правильность расставления скобок(“[”,”]”,”{”,”}”,”<”,”>”,”(”,”)”)
+	public BracketChecker(String st) {
+		this.st = st;
+	}
 
-		String input = callScanner(); // вызов сканнера для ввода проверяемой строки
+	public BracketChecker() {
 
-		System.out.println("Проверка строки: " + input);
+	}
 
+	public String getSt() {
+		return st;
+	}
+
+	public void setSt(String st) {
+		this.st = st;
+	}
+
+	@MethodAnnotation()
+	public boolean getResult() throws BracketException {
+		String input = this.getSt();
 		String filtered = getFilteredBrackets(input);
-		System.out.println(filtered);
-
-		try {
-			System.out.println("Результат проверки: " + getResult(filtered));
-		} catch (BracketException e) {
-			e.printStackTrace();
+		boolean result = isBalanced(filtered, "");
+		if (result == false) {
+			throw new BracketException("неправильная последовательность скобок");
 		}
 
+		return result;
+		
 	}
 
 	private static String getFilteredBrackets(String input) {
 		return input.chars() // извлекаем из строки скобки в отдельную строку
 				.filter(i -> isOpen((char) i) || isClose((char) i)).mapToObj(i -> "" + (char) i)
 				.collect(Collectors.joining());
-	}
-
-	private static boolean getResult(String input) throws BracketException {
-		boolean result = isBalanced(input, "");
-		if (result == false) {
-			throw new BracketException("неправильная последовательность скобок");
-		}
-
-		return result;
-
 	}
 
 	private static boolean isBalanced(String input, String open) {
@@ -70,15 +70,6 @@ public class Starter {
 
 	private static boolean isClose(char ch) {
 		return close.indexOf(ch) != -1;
-	}
-
-	private static String callScanner() {
-		System.out.println("Введите сстроку для проверки и нажмите <Enter> ");
-		Scanner scan = new Scanner(System.in);
-		String name = scan.nextLine();
-		scan.close();
-		return name;
-
 	}
 
 }
