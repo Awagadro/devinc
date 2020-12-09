@@ -1,7 +1,6 @@
 package devinc.pre.mod01;
 
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Starter {
 	static String open = "([<{";
@@ -15,32 +14,50 @@ public class Starter {
 
 		System.out.println("Проверка строки: " + input);
 
-		String filtered = input.chars() // извлекаем из строки скобки в отдельную строку
-				.filter(i -> isOpen((char) i) || isClose((char) i))
-				.mapToObj(i -> "" + (char) i)
-				.collect(Collectors.joining());
-		System.out.println(filtered);
-
-		System.out.println("Результат проверки: " + isBalanced(filtered, ""));
+		System.out.println("Результат проверки: " + isBalanced(input));
 
 	}
 
-	private static boolean isBalanced(String input, String open) {
-		// находим и удаляем соответствующие скобки методом рекурсии
-		if (input.isEmpty()) {
-			return open.isEmpty();
-		} else if (isOpen(input.charAt(0))) { // ищем открывающие скобки
-			return isBalanced(input.substring(1), input.charAt(0) + open); // и, если находим, добавляем в open
-		} else if (isClose(input.charAt(0))) {// ищем закрывающие скобки
-			return !open.isEmpty() && isMatching(open.charAt(0), input.charAt(0))// и, если находим, сравниваем с
-																					// последней открывающей из open
-					&& isBalanced(input.substring(1), open.substring(1)); // если нашли соответствие, удаляем пару
-																			// скобок и повторяем цикл
-		} else {
-			return isBalanced(input.substring(1), open); // не обязательно, отработает если предварительно не извлекать
-															// скобки из текста
+	private static boolean isBalanced(String input) {
+		// находим и удаляем соответствующие скобки
+		char[] ch = input.toCharArray();
+		char[] open = new char[1]; // стек, куда будем запихивать открытые скобки
+		for (int i = 0; i < ch.length; i++) {
+			if (isOpen(ch[i])) { // если нашли открытую скобку
+				open = addCharToArray(open, ch[i]); // добавляем открытую скобку в стек
+				continue; // возврат в начало цикла с проверкой нового символа
+			} else if (isClose(ch[i]) && isMatching(open[0], ch[i])) { // если нашли закрытую и она совпадает с
+																		// последней открытой
+				open = removeCharFromArray(open); // убираем из стека соответствующую скобку
+				continue; // возврат в начало цикла с проверкой нового символа
+			} else if (isClose(ch[i]) && !isMatching(open[0], ch[i])) {
+				return false;
+			} else if (!isClose(ch[i]) && !isOpen(ch[i])) { // если встретили какой-то другой символ (не скобки)
+				continue;// возврат в начало цикла с проверкой нового символа
+			}
 		}
 
+		if (open[0] != '\u0000') { // пустой default char
+			return false;
+		}
+		return true;
+	}
+
+	private static char[] removeCharFromArray(char[] open) {// удаляет символ из начало массива
+		char[] temp = new char[open.length - 1];
+		for (int i = 1; i < open.length; i++) {
+			temp[i - 1] = open[i];
+		}
+		return temp;
+	}
+
+	private static char[] addCharToArray(char[] open, char c) { // добавляет символ в начало массива
+		char[] temp = new char[open.length + 1];
+		temp[0] = c;
+		for (int i = 0; i < open.length; i++) {
+			temp[i + 1] = open[i];
+		}
+		return temp;
 	}
 
 	private static boolean isMatching(char chO, char chC) {
