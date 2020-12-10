@@ -10,23 +10,19 @@ import devinc.pre.mod03.animals.Sheep;
 public class Starter {
 
 	public static void main(String[] args) {
-		// консольное приложение, в которое вводиться с консоли имя животного и
-		// возвращается его голос (Собака – Гав-гав, корова – му-му и т.п.)
+		// mod 2 + Generic на методе
 
 		String input = callScanner(); // вызов сканнера для ввода проверяемой строки
 		Animal a = null;
 		if (input.equals(Cow.NAME)) {
 			a = new Cow();
-			VoiceLoader<Animal> vl = new VoiceLoader<Animal>();
-			vl.loadVoice(a);
+			VoiceLoader.loadVoice(a);
 		} else if (input.equals(Dog.NAME)) {
 			a = new Dog();
-			VoiceLoader<Animal> vl = new VoiceLoader<Animal>();
-			vl.loadVoice(a);
+			VoiceLoader.loadVoice(a);
 		} else if (input.equals(Sheep.NAME)) {
 			a = new Sheep();
-			VoiceLoader<Animal> vl = new VoiceLoader<Animal>();
-			vl.loadVoice(a);
+			VoiceLoader.loadVoice(a);
 			;
 		} else {
 			System.out.println("нет такого зверя");

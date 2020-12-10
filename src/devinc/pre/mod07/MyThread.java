@@ -48,19 +48,12 @@ public class MyThread implements Runnable {
 
 	private static boolean isBalanced(String input, String open) {
 		// находим и удаляем соответствующие скобки методом рекурсии
-		if (input.isEmpty()) {
-			return open.isEmpty();
-		} else if (isOpen(input.charAt(0))) { // ищем открывающие скобки
-			return isBalanced(input.substring(1), input.charAt(0) + open); // и, если находим, добавляем в open
-		} else if (isClose(input.charAt(0))) {// ищем закрывающие скобки
-			return !open.isEmpty() && isMatching(open.charAt(0), input.charAt(0))// и, если находим, сравниваем с
-																					// последней открывающей из open
-					&& isBalanced(input.substring(1), open.substring(1)); // если нашли соответствие, удаляем пару
-																			// скобок и повторяем цикл
-		} else {
-			return isBalanced(input.substring(1), open); // не обязательно, отработает если предварительно не извлекать
-															// скобки из текста
-		}
+		return input.isEmpty() ? open.isEmpty()
+				: isOpen(input.charAt(0)) ? isBalanced(input.substring(1), input.charAt(0) + open)
+						: isClose(input.charAt(0))
+								? !open.isEmpty() && isMatching(open.charAt(0), input.charAt(0))
+										&& isBalanced(input.substring(1), open.substring(1))
+								: isBalanced(input.substring(1), open);
 
 	}
 
