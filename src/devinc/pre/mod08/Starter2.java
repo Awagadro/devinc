@@ -53,8 +53,7 @@ public class Starter2 {
 			for (Field field : fields) {
 				if (field.getType().isAssignableFrom(String.class)) {
 					field.setAccessible(true);
-					ac.setSt((String) field.get(ob)); // передаем в BracketChecker содержание поля
-					boolean res = ac.getResult();
+					boolean res = ac.getResult((String) field.get(ob));// передаем в BracketChecker содержание поля
 					System.out.println("Проверили поле " + field.getName() + ", результат: " + res);
 				}
 			}

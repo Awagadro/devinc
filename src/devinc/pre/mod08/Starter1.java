@@ -1,35 +1,54 @@
 package devinc.pre.mod08;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import devinc.pre.mod08.original.IText;
+import devinc.pre.mod08.original.TextImpl;
+
 public class Starter1 {
 	public static void main(String[] args) throws Exception {
-// вызов основного функционала с помощью аннотаций, при добавлении аннотации к методу 
+// вызов функции проверки скобок при отработке метода, помеченного аннотацией
 		final String fileName = "src\\devinc\\pre\\data\\text.txt";
 		String input = readFile(fileName);
+		IText text = new TextImpl();
+		Handler handler = new Handler(text);
+		// Class<?> cl = IText.class;
+		// Object o = cl.getDeclaredConstructor().newInstance();
+		// Method[] mm = cl.getDeclaredMethods();
 
-		Class<?> cl = BracketChecker.class;
-		Object o = cl.getDeclaredConstructor().newInstance();
-		// AnnotationChecker o = (AnnotationChecker) cl.newInstance(); // можно и так
+		IText textProxy = (IText) Proxy.newProxyInstance(text.getClass().getClassLoader(),
+				TextImpl.class.getInterfaces(), handler);
+		textProxy.setAuthor("name");
+		textProxy.setTitle("(document>");
+		textProxy.setContents(input);
+		textProxy.getContents(); // если скобки расставлены неправильно выскочит Exception
+//		textProxy.getTitle();
+	}
 
-		Field field = cl.getDeclaredField("st");
-		field.setAccessible(true);
-		field.set(o, input);
+	static class Handler implements InvocationHandler {
+		private final IText original;
 
-		Method[] mm = cl.getMethods();
-		for (Method method : mm) {
-			if (method.isAnnotationPresent(MethodAnnotation.class)) {
-
-				boolean result = (boolean) method.invoke(o);
-				System.out.println("Проверка расстановки скобок: " + result);
-
-			}
+		public Handler(IText original) {
+			this.original = original;
 		}
 
+		BracketChecker checker = new BracketChecker();
+
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BracketException {
+			if (method.isAnnotationPresent(MethodAnnotation.class)) {
+				System.out.println("Результат проверки расстоновки скобок: "
+						+ checker.getResult(((String) method.invoke(original, args))));
+				return method.invoke(original, args);
+			}
+			return method.invoke(original, args);
+		}
 	}
 
 	private static String readFile(String fileName) {
